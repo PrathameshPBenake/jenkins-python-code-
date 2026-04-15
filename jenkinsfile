@@ -2,14 +2,27 @@ pipeline {
     agent any
 
     stages {
-        stage('Deploy to NGINX') {
+        stage('Build Docker Image') {
             steps {
                 bat '''
-                del /Q C:\\nginx\\html\\*
-                xcopy /E /I /Y "%WORKSPACE%\\*" "C:\\nginx\\html\\"
-                taskkill /F /IM nginx.exe
-                cd C:\\nginx
-                start nginx
+                docker build -t my-nginx-app .
+                '''
+            }
+        }
+
+        stage('Stop Old Container') {
+            steps {
+                bat '''
+                docker stop my-nginx-container || echo not running
+                docker rm my-nginx-container || echo not exist
+                '''
+            }
+        }
+
+        stage('Run New Container') {
+            steps {
+                bat '''
+                docker run -d -p 8080:80 --name my-nginx-container my-nginx-app
                 '''
             }
         }
