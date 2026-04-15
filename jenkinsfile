@@ -2,22 +2,11 @@ pipeline {
     agent any
 
     stages {
-        stage('Clone Code') {
-            steps {
-                git 'https://github.com/PrathameshPBenake/jenkins-python-code-.git'
-            }
-        }
-
         stage('Deploy to NGINX') {
             steps {
                 bat '''
-                echo Cleaning old files...
                 del /Q C:\\nginx\\html\\*
-
-                echo Copying new files...
                 xcopy /E /I /Y "%WORKSPACE%\\*" "C:\\nginx\\html\\"
-
-                echo Restarting NGINX...
                 taskkill /F /IM nginx.exe
                 cd C:\\nginx
                 start nginx
