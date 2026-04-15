@@ -13,8 +13,11 @@ pipeline {
         stage('Stop Old Container') {
             steps {
                 bat '''
-                docker stop my-nginx-container || echo not running
-                docker rm my-nginx-container || echo not exist
+                docker stop my-nginx-container
+                IF %ERRORLEVEL% NEQ 0 echo Container not running
+
+                docker rm my-nginx-container
+                IF %ERRORLEVEL% NEQ 0 echo Container not exist
                 '''
             }
         }
