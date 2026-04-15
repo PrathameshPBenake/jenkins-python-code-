@@ -4,17 +4,14 @@ pipeline {
     stages {
         stage('Build Docker Image') {
             steps {
-                bat '''
-                docker build -t my-nginx-app .
-                '''
+                bat 'docker build -t my-nginx-app .'
             }
         }
 
-        stage('Stop Old Container') {
+        stage('Remove Old Container') {
             steps {
                 bat '''
-                docker stop my-nginx-container 2>nul
-                docker rm my-nginx-container 2>nul
+                docker rm -f my-nginx-container 2>nul
                 exit /b 0
                 '''
             }
@@ -23,7 +20,7 @@ pipeline {
         stage('Run New Container') {
             steps {
                 bat '''
-                docker run -d -p 8080:80 --name my-nginx-container my-nginx-app
+                docker run -d -p 8081:80 --name my-nginx-container my-nginx-app
                 '''
             }
         }
